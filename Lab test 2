@@ -1,0 +1,47 @@
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_boston
+
+data = load_boston()
+features = data.feature_names
+print(len(features))
+print(features)
+df = pd.DataFrame(data.data, columns = features)
+df['target'] = data.target
+
+for column in features:
+    print("for ", column, " number of empty values are " , df[column].isnull().sum())
+    df[column].fillna(df[column].mean, inplace = True)
+print(df.describe())
+
+plt.scatter(df['RM'], df['NOX'])
+
+from sklearn.model_selection import train_test_split
+X = data.data
+y = data.target
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.7, random_state = 42)
+
+from sklearn.linear_model import LinearRegression, Ridge
+
+line = LinearRegression()
+line.fit(X_train, y_train)
+liney = line.predict(X_test)
+print(liney)
+print(y_test)
+
+
+liner = Ridge()
+liner.fit(X_train, y_train)
+linery = line.predict(X_test)
+plt.plot(liney, y_test)
+plt.plot(linery, y_test)
+from sklearn.metrics import mean_absolute_error
+from sklearn.metrics import r2_score
+print("MAE")
+print(mean_absolute_error(liney, y_test))
+print(mean_absolute_error(linery, y_test))
+print("R2 score")
+print(r2_score(liney, y_test))
+print(r2_score(linery, y_test))
